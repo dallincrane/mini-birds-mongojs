@@ -1,59 +1,89 @@
-# mini-birds
-## Objectives
-The purpose of this project is to solidify your understanding of the MongoDB API.  By the end of the project, you should know how to perform CRUD operations in MongoDB and view your data (via command line or a GUI).
+# mini-birds-mongojs
+ 
+_Goal_: Build a **bird sighting** API in Express using four common CRUD operations in MongoDB using MongoJS.
 
-We are going to build a bird-sighting API.  Consumers (or, developers who use this API) will be able to:
+## Sample Data
 
- * Send requests to the API to report a bird sighting
- * Send requests to the API to retrieve bird sightings in a specific area, or of a specific species
- * Send requests to change/edit/update a previously reported sighting
- * Send requests to delete/remove a previously reported sighting
+Note the following sample data, for sightings:
 
-We will need to set up our app, create a Node/Express API, and then hook the API up to our database.
+```json
+[{
+  "name": "red breasted merganser", 
+    "order": "Anseriformes", 
+    "status": "least concern"
+},
+{
+  "name": "cedar waxwing", 
+  "order": "Passeriformes", 
+  "status": "least concern"
+},
+{
+  "name": "osprey", 
+  "order": "Accipitriformes",
+  "status": "extinct"
+},
+{
+  "name": "snowy plover", 
+  "order": "Charadriformes", 
+  "status": "near threatened"
+}]
+```
 
-## Step 1: Setting Up
+## Step 1: Clone the repo
 
-Initialize your Node app and install the following packages:
- * `express`
- * `body-parser`
- * `cors`
- * `mongojs`
+Create your Express.js app by cloning this repository.
 
-Initialize your app and set up your middleware.
+## Step 2: Install the NPM modules
 
-After you have initialized your app, connect to your database via MongoJS.  This is where you will specify the name of your database and the names of your collections (for now, we'll just use a `sightings` collection).  If you need some guidance, take a look at their [documentation](https://github.com/mafintosh/mongojs).
+```
+npm install
+```
 
-**Breakpoint:** At this point, you should be able to start your app (`node server.js`) and see that your app is listening, and have no errors.  Your app should also be connected to your database, but we will test that functionality later on.
+## Step 3: Test it
 
-## Step 2: Create API
+Start your application by running:
+ 
+```
+node server.js
+```
 
-Create 'POST', 'GET', 'PUT', and 'DELETE' endpoints for `/api/sighting`
+Test each of your endpoints in Postman with the following URLs:
 
-In POSTMan, test each of these endpoints with:
+* **POST** `/api/sighting`
+* **GET** `/api/sighting?region=america`
+* **PUT** `/api/sighting?id=some-id`
+* **DELETE** `/api/sighting?id=some-id`
 
- * **POST** `/api/sighting`
- * **GET** `/api/sighting?region=america&species=redrobin`
- * **PUT** `/api/sighting?id=09evasd09jhahs9d8h9vh`
- * **DELETE** `/api/sighting?id=09evasd09jhahs9d8h9vh`
+If everything's working, you'll see console output each time you hit your endpoints.
 
-**Breakpoint:** You should be able to hit these endpoints without error.  To make sure they're actually running correctly, put `console.log` in your functions and hit those endpoints with POSTMan to see that they're running.  For the routes that take queries, `console.log` those queries and make sure you're getting them correctly.  We have not connected these routes to the database yet.  We will add that functionality in the next step.
+## Step 4: Start mongod
 
-## Step 3: Connect API to MongoDB
+Start the mongo daemon in a separate terminal window.
 
-NOTE: I will refer to two different types of queries here.  If I say request query, I mean the query supplied from the front-end via the URL.  Otherwise, I mean a MongoDB query.
+## Step 5: Require and connect to Mongo
 
- - In your POST route handler, create a new document under the `sightings` collection.  If you are confused how the logic for this might look, refer back to the [docs](https://github.com/mafintosh/mongojs#api). Send an appropriate response to the client (success, or error).
+Now, require the MongoJS module, and create a database by connecting to it in `server.js`. Name your database `birds`.
 
-**Breakpoint:** You should be able to save data to your database now.  After posting one or two pieces of dummy data, check to see that that data now exists, using either the command line or a GUI like RoboMongo. If you can see data in your database, you will know that you are correctly connected to the database, and that it is saving correctly.
+HINT: [Read the documentation](https://github.com/mafintosh/mongojs)
 
- - In your GET route handler, create a MongoJS query that will return sightings.  If there is a region specified in the request query, return only the sightings in that region.  If the request query specifies a species, return only the sightings of that species.  If there are no request queries, return all of the sightings.
+## Step 6: Declare your `sightings` collection
 
- - In the PUT route handler, update *x* document (where *x* is the id supplied by the request query) with the data provided in `req.body`.
+Create a var that references a collection called `sightings`.
 
- - In the DELETE route handler, delete *x* document where *x* is the id supplied by the reqeust query.
+## Step 7: Upgrade 'POST' endpoint to record a sighting
 
-**Breakpoint:** Test each of your endpoints with POSTMan and either the command line or RoboMong to ensure that everything is happening as expected.  If you need some dummy data, it is provided in the `birds.js` file.
+Upgrade your POST endpoint with code to create a sighting document from the `body` of the request. The body should include `name`, `order`, and `status`.
 
-===========
+For steps 7 through 10, test each of your endpoints again. Note the sample data above for your tests.
 
-Congrats!  You've just created your first true CRUD app.  You can now create, read, update, and delete bird sightings, and they will persist, even if you refresh your browser or reboot your server.  Woo!
+## Step 8: Upgrade 'GET' endpoint to retrieve a sighting
+
+Modify the GET endpoint to retrieve all sightings with a given `status`, as stated in the request query.
+
+## Step 9: Upgrade 'PUT' endpoint to modify a sighting's order
+
+Update your PUT endpoint to accept a `body` modifying an existing sighting's `order` field. Use the `id` parameter in the query string to identify the sighting to change.
+
+## Step 10: Upgrade 'DELETE' endpoint to delete a sighting
+
+Update your DELETE endpoint to delete a sighting document by `id` in the query string.
